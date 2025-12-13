@@ -55,16 +55,16 @@ client.on("messageCreate", async (message) => {
                     画像の中からAMとPM別々に以下の11項目のテキストを抽出してください。
                     「Date」
                     「Shift Leader(s)」
-                    「# Volunteers on shift」
-                    「# Guest Contacts」
-                    「# Security/Animal-related radio calls」
-                    「# GE/Building Services-related radio calls」
+                    「Volunteers on shift」
+                    「Guest Contacts」
+                    「Security/Animal-related radio calls」
+                    「GE/Building Services-related radio calls」
                     「Highlights」
                     「Challenges」
                     「Comments/Observations」
                     「Unanswered Questions」
                     「Actions to follow up on」
-                    AMとPM別々にどの項目の抽出結果かわかるように返してください。
+                    AMとPM別々に抽出結果かわかるように返してください。
                     余計な説明や前置きは不要です。
                     テキストのみ返してください。
                     `;
