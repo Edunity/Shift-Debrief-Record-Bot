@@ -46,13 +46,15 @@ client.on("messageCreate", async (message) => {
                     const image = images.first();
                     const imageUrl = image.url;
 
-                    // 画像を取得して base64 に変換
                     const response = await fetch(imageUrl);
                     const buffer = await response.arrayBuffer();
                     const base64Image = Buffer.from(buffer).toString("base64");
 
                     const prompt = `
-                    この画像の中から「Highlights」という見出しの欄を探して、その欄に書かれている文字だけを抽出してください。
+                    この画像は左右で2つに分かれているシフト表です。
+                    左側がAMシフトで右側がPMシフトの表です。
+                    画像の中からAMとPM別々に「Highlights」「Challenges」「Comments/Observations」「Unanswered Questions」の4項目のテキストを抽出してください。
+                    AMとPM別々にどの項目の抽出結果かわかるように返してください。
                     余計な説明や前置きは不要です。テキストのみ返してください。
                     `;
 
