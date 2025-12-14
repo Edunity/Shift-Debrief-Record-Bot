@@ -33,6 +33,8 @@ const client = new Client({
     ],
 });
 
+const imageStore = new Map();
+
 client.once("ready", () => {
     console.log("woke up.");
 });
@@ -55,13 +57,16 @@ client.on("messageCreate", async (message) => {
             if (images.size > 0) {
                 const image = images.first();
 
+                const imageId = `${message.id}-${Date.now()}`;
+                imageStore.set(imageId, image.url);
+
                 const row = new ActionRowBuilder().addComponents(
                     new ButtonBuilder()
-                        .setCustomId(`select_am:${image.url}`)
+                        .setCustomId(`select_am:${imageId}`)
                         .setLabel("AM")
                         .setStyle(ButtonStyle.Primary),
                     new ButtonBuilder()
-                        .setCustomId(`select_pm:${image.url}`)
+                        .setCustomId(`select_pm:${imageId}`)
                         .setLabel("PM")
                         .setStyle(ButtonStyle.Secondary)
                 );
@@ -92,8 +97,9 @@ client.on("interactionCreate", async (interaction) => {
         return;
     }
 
-    const [type, imageUrl] = interaction.customId.split(":");
+    const [type, imageId] = interaction.customId.split(":");
     const shiftType = type === "select_am" ? "AM" : "PM";
+    const imageUrl = imageStore.get(imageId);
 
     await interaction.deferReply();
 
