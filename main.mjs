@@ -53,13 +53,15 @@ client.on("messageCreate", async (message) => {
             );
 
             if (images.size > 0) {
+                const image = images.first();
+
                 const row = new ActionRowBuilder().addComponents(
                     new ButtonBuilder()
-                        .setCustomId("select_am")
+                        .setCustomId(`select_am:${image.url}`)
                         .setLabel("AM")
                         .setStyle(ButtonStyle.Primary),
                     new ButtonBuilder()
-                        .setCustomId("select_pm")
+                        .setCustomId(`select_pm:${image.url}`)
                         .setLabel("PM")
                         .setStyle(ButtonStyle.Secondary)
                 );
@@ -68,43 +70,7 @@ client.on("messageCreate", async (message) => {
                     content: "どちらのシフトを抽出しますか？",
                     components: [row],
                 });
-
-                // const image = images.first();
-                // const imageUrl = image.url;
-
-                // const response = await fetch(imageUrl);
-                // const buffer = await response.arrayBuffer();
-                // const base64Image = Buffer.from(buffer).toString("base64");
-
-                // const prompt = `
-                // この画像は左右で2つに分かれたシフト記録で、左側がAMシフトの表、右側がPMシフトの表です。
-                // 画像の中からAMとPM別々に以下の11項目のテキストを抽出してください。
-                // 「Highlights」
-                // 「Challenges」
-                // 「Comments/Observations」
-                // 「Unanswered Questions」
-                // AMとPMそれぞれの各抽出結果のみを横一列にExcelに入力できるように、Tabで区切ったものも返してください。
-                // 余計な説明や前置きは不要です。
-                // テキストのみ返してください。
-                // `;
-
-                // const result = await model.generateContent([
-                //     {
-                //         text: prompt,
-                //     },
-                //     {
-                //         inlineData: {
-                //             data: base64Image,
-                //             mimeType: image.contentType || "image/png",
-                //         },
-                //     },
-                // ]);
-
-                // const text = result.response.text();
-
-                // await message.reply(text);
-            }
-            else {
+            } else {
 
             }
         }
@@ -119,6 +85,51 @@ client.on("messageCreate", async (message) => {
 
         console.error(error);
     }
+});
+
+client.on("interactionCreate", async (interaction) => {
+    if (!interaction.isButton()) {
+        return;
+    }
+
+    const [type, imageUrl] = interaction.customId.split(":");
+    const shiftType = type === "select_am" ? "AM" : "PM";
+
+    await interaction.deferReply();
+
+    if (!imageUrl) {
+        await interaction.editReply("画像URLが取得できませんでした。");
+        return;
+    }
+
+    const response = await fetch(imageUrl);
+    const buffer = await response.arrayBuffer();
+    const base64Image = Buffer.from(buffer).toString("base64");
+
+    const prompt = `
+この画像は左右で2つに分かれたシフト記録で、左側がAM、右側がPMです。
+${shiftType}シフトのみから以下を抽出してください。
+
+Highlights
+Challenges
+Comments/Observations
+Unanswered Questions
+
+Excelに貼れるようTab区切りで返してください。
+テキストのみ返してください。
+`;
+
+    const result = await model.generateContent([
+        { text: prompt },
+        {
+            inlineData: {
+                data: base64Image,
+                mimeType: "image/png",
+            },
+        },
+    ]);
+
+    await interaction.editReply(result.response.text());
 });
 
 app.get("/", (req, res) => {
