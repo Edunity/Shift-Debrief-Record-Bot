@@ -116,12 +116,13 @@ client.on("interactionCreate", async (interaction) => {
 この画像は左右で2つに分かれたシフト記録で、左側がAM、右側がPMです。
 ${shiftType}シフトのみから以下を抽出してください。
 
-Highlights
-Challenges
-Comments/Observations
-Unanswered Questions
+「Highlights」
+「Challenges」
+「Comments/Observations」
+「Unanswered Questions」
 
-Excelに貼れるようTab区切りで返してください。
+抽出した結果のみをExcelに貼れるようTab区切りで返してください。
+余計な説明や前置きは不要です。
 テキストのみ返してください。
 `;
 
