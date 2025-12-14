@@ -59,7 +59,7 @@ client.on("messageCreate", async (message) => {
                 「Challenges」
                 「Comments/Observations」
                 「Unanswered Questions」
-                AMとPM別々に各抽出結果を横一列にExcelに入力できるように、Tabで区切ったものも返してください。
+                AMとPMそれぞれの各抽出結果のみを横一列にExcelに入力できるように、Tabで区切ったものも返してください。
                 余計な説明や前置きは不要です。
                 テキストのみ返してください。
                 `;
