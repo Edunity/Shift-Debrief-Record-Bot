@@ -72,7 +72,7 @@ client.on("messageCreate", async (message) => {
                 );
 
                 await message.reply({
-                    content: "どちらのシフトを抽出しますか？",
+                    content: "Which shift would you like to extract?",
                     components: [row],
                 });
             } else {
@@ -93,49 +93,55 @@ client.on("messageCreate", async (message) => {
 });
 
 client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isButton()) {
-        return;
-    }
+    try {
+        if (!interaction.isButton()) {
+            return;
+        }
 
-    const [type, imageId] = interaction.customId.split(":");
-    const shiftType = type === "select_am" ? "AM" : "PM";
-    const imageUrl = imageStore.get(imageId);
+        const [type, imageId] = interaction.customId.split(":");
+        const shiftType = type === "select_am" ? "AM" : "PM";
+        const imageUrl = imageStore.get(imageId);
 
-    await interaction.deferReply();
+        await interaction.deferReply();
 
-    if (!imageUrl) {
-        await interaction.editReply("画像URLが取得できませんでした。");
-        return;
-    }
+        if (!imageUrl) {
+            await interaction.editReply("Failed to retrieve the image.");
+            return;
+        }
 
-    const response = await fetch(imageUrl);
-    const buffer = await response.arrayBuffer();
-    const base64Image = Buffer.from(buffer).toString("base64");
+        const response = await fetch(imageUrl);
+        const buffer = await response.arrayBuffer();
+        const base64Image = Buffer.from(buffer).toString("base64");
 
-    const prompt = `
-この画像は左右2つに分かれたシフト記録で、左側がAM、右側がPMです。
-${shiftType}のみから以下の項目に記述してある手書き文を抽出してください。
-何も記述されてない項目は空文字列で処理してください。
-「Highlights」
-「Challenges」
-「Comments/Observations」
-「Unanswered Questions」
-抽出した手書き文のみをExcelに貼れるようTab区切りで返してください。
-余計な説明や前置きは不要です。
-テキストのみ返してください。
-`;
+        const prompt = `
+            この画像は左右2つに分かれたシフト記録で、左側がAM、右側がPMです。
+            ${shiftType}のみから以下の項目に記述してある手書き文を抽出してください。
+            何も記述されてない項目の手書き文は"-"としてください。
+            「Highlights」
+            「Challenges」
+            「Comments/Observations」
+            「Unanswered Questions」
+            抽出した手書き文のみをExcelに貼れるようTab区切りで返してください。
+            余計な説明や前置きは不要です。
+            テキストのみ返してください。
+        `;
 
-    const result = await model.generateContent([
-        { text: prompt },
-        {
-            inlineData: {
-                data: base64Image,
-                mimeType: "image/png",
+        const result = await model.generateContent([
+            { text: prompt },
+            {
+                inlineData: {
+                    data: base64Image,
+                    mimeType: "image/png",
+                },
             },
-        },
-    ]);
+        ]);
 
-    await interaction.editReply(result.response.text());
+        await interaction.editReply(result.response.text());
+    } catch (error) {
+        await message.reply("error.");
+
+        console.error(error);
+    }
 });
 
 app.get("/", (req, res) => {
