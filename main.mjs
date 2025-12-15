@@ -122,6 +122,9 @@ client.on("interactionCreate", async (interaction) => {
             「Comments/Observations」
             「Unanswered Questions」
             抽出した手書き文のみを|||区切りで返してください。
+            抽出結果は必ず次の形式で1行のみ返してください。
+            順番は変更しないでください。
+            Highlightsの手書き文|||Challengesの手書き文|||Comments/Observationsの手書き文|||Unanswered Questionsの手書き文
             余計な説明や前置きは不要です。
             テキストのみ返してください。
         `;
