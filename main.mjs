@@ -116,6 +116,7 @@ client.on("interactionCreate", async (interaction) => {
             この画像は左右2つに分かれたシフト記録で、左側がAM、右側がPMです。
             ${shift}のみから以下の項目に記述してある手書き文を抽出してください。
             何も記述されてない項目の手書き文は"-"としてください。
+            改行は取り除いてください。
             「Highlights」
             「Challenges」
             「Comments/Observations」
