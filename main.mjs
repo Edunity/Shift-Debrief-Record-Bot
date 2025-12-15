@@ -17,7 +17,7 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-const CHANNEL_ID = "1449139165911580815";
+const CHANNEL_ID = "1450172846893568000";
 
 const ai = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = ai.getGenerativeModel({ 
